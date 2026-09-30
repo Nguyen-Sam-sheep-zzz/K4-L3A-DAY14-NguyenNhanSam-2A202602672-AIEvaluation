@@ -1,10 +1,26 @@
-# K4 — Level 3A, Ngày 14: AI Evaluation & Benchmarking Pipeline (225 phút)
+# K4 — Level 3A, Ngày 14: Đánh giá và so sánh chất lượng trợ lý AI (225 phút)
 
-**AICB-P1 · Phase 1 · Ngày 14 trong 15 · K4**
+**AICB-P1 · Giai đoạn 1 · Ngày 14 trong 15 · K4**
 
-Lab này là bài **AI Evaluation**. Bạn sẽ hoàn thiện evaluation core trong `template.py`, xây dựng một golden dataset 20 câu, chạy một hệ thống RAG thật trên corpus **OrbitTech Store Customer Support**, rồi phân tích kết quả benchmark.
+Đây là bài **đánh giá trợ lý AI**. Bộ chấm điểm nằm trong `template.py`;
+`golden_dataset.json` có 20 câu hỏi chuẩn; `domain_assistant.py` là trợ lý
+RAG trả lời theo tài liệu hỗ trợ khách hàng OrbitTech. Kết quả chạy thật đã
+được lưu để phân tích.
 
-> Hệ thống RAG trong `domain_assistant.py` là **system under evaluation**. Nó sinh câu trả lời; `template.py` là **evaluation engine** chấm các câu trả lời đó. Hai phần có vai trò hoàn toàn độc lập.
+> `domain_assistant.py` **trả lời câu hỏi**; `template.py` **chấm câu trả lời**.
+> Hai phần độc lập để trợ lý không nhìn thấy đáp án chuẩn khi đang trả lời.
+
+### Xem nhanh kết quả bài làm
+
+```text
+10 tài liệu nguồn → 20 câu hỏi chuẩn → 20 câu trả lời RAG thật → 5 chỉ số
+→ 3 ca điểm thấp nhất → phân tích 5 lần hỏi “Tại sao?”
+```
+
+Đã kiểm tra: **42 test đạt**, bộ 20 câu **PASS** và dùng đủ **10/10** tài liệu.
+Kết quả benchmark đã lưu: **16/20 câu đạt theo công thức trùng từ (80%)**.
+Đây không phải tỷ lệ đúng về nghĩa; báo cáo giải thích các ca máy chấm nhầm.
+Đọc [Hướng dẫn demo tiếng Việt](HUONG_DAN_DEMO_VI.md) để chạy và thuyết trình.
 
 ---
 
@@ -14,17 +30,17 @@ Lab này là bài **AI Evaluation**. Bạn sẽ hoàn thiện evaluation core tr
 
 Tài liệu chính thức của bài lab:
 
-- [SUBMISSION.md](SUBMISSION.md) — cấu trúc bài nộp, tên repo và nơi nộp
+- [SUBMISSION.md](SUBMISSION.md) — cấu trúc bài nộp, tên kho mã và nơi nộp
 - [RUBRIC.md](RUBRIC.md) — tiêu chí chấm, bằng chứng và điều kiện mất điểm
 - [CHECKPOINTS.md](CHECKPOINTS.md) — sản phẩm, kiến thức và cách tự kiểm tra từng checkpoint
 - [RULES.md](RULES.md) — quy định làm bài, dùng AI, hợp tác và bảo mật
 
-### Quy chuẩn đặt tên Repository
+### Quy chuẩn đặt tên kho mã
 
 | Vai trò | Tên chuẩn |
 |---|---|
-| Assignment / starter repo (repo này) | `K4-L3A-AI-Evaluation` |
-| Student submission repo | `K4-L3A-DAY14-<HoVaTen>-<MSSV>-AIEvaluation` |
+| Kho mã đề bài | `K4-L3A-AI-Evaluation` |
+| Kho mã học viên nộp | `K4-L3A-DAY14-<HoVaTen>-<MSSV>-AIEvaluation` |
 | Ví dụ | `K4-L3A-DAY14-NguyenVanAn-L3A202600280-AIEvaluation` |
 
 > ⚠️ **Đặt sai tên repo = trừ 5 điểm** theo quy định trong [RUBRIC.md](RUBRIC.md).
@@ -34,16 +50,31 @@ Hạn nộp mặc định: **23h59 ngày lab (GMT+7)**; coach có thể gia hạ
 
 ---
 
-## Yêu cầu & Quick Start
+## Yêu cầu và cách chạy nhanh trên Windows PowerShell
 
-**Yêu cầu:** Python 3.11 trở lên. Cần **OpenAI API key** để chạy `domain_assistant.py` (Part 3 — sinh 20 actual answers từ RAG thật); phần code core (`template.py`, Part 1–2) không cần API key.
+**Yêu cầu:** Python 3.11 trở lên. Kiểm thử và xem bảng kết quả đã lưu không
+cần gọi API. Chỉ cần API key khi sinh câu trả lời mới hoặc bấm nút hỏi trực
+tiếp trong giao diện.
 
-```bash
-python --version                                        # xác nhận Python 3.11+
-python -m venv .venv && source .venv/bin/activate       # Windows: .venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-pytest tests/ -v                                         # baseline: 42 tests collected, 42 failed
-cp .env.example .env                                     # điền OPENAI_API_KEY (chỉ cần cho Part 3)
+```powershell
+.venv\Scripts\python.exe -m pytest tests/ -q
+.venv\Scripts\python.exe validate_golden_dataset.py
+.venv\Scripts\python.exe -m streamlit run app.py
+```
+
+Trong giao diện, chọn E01/H03/A01 để xem câu hỏi, đáp án tham khảo và kết quả
+đã lưu bằng tiếng Việt. Bản trả lời và đoạn tài liệu gốc vẫn là tiếng Anh để
+đối chiếu với benchmark.
+
+**Nếu cài mới từ đầu**, làm theo `guide_lab.md` và `requirements.txt`. Đoạn
+lệnh dưới đây là hướng dẫn khởi tạo môi trường của đề gốc, không phải việc
+cần chạy lại khi `.venv` đã hoạt động:
+
+```powershell
+python --version
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env                              # chỉ để gọi API
 ```
 
 Chi tiết hướng dẫn theo hệ điều hành và xử lý lỗi: xem [`guide_lab.md`](guide_lab.md).
@@ -52,35 +83,35 @@ Chi tiết hướng dẫn theo hệ điều hành và xử lý lỗi: xem [`guid
 
 ## Mục tiêu
 
-Sau bài lab này, học viên có thể:
+Sau bài thực hành này, học viên có thể:
 
-1. Xây dựng pipeline đánh giá tự động cho AI agent trên 20 test cases.
-2. Triển khai các metrics lấy cảm hứng từ RAGAS (answer-side và retrieval-side).
-3. Thiết kế LLM-as-a-Judge rubric theo thang điểm 1–5 và cơ chế kiểm soát bias.
-4. Xây dựng golden dataset bằng phương pháp stratified sampling.
-5. Thực hiện failure analysis bằng kỹ thuật failure clustering và 5 Whys.
-6. Thiết lập evaluation pipeline như một quality gate trong CI / CD.
+1. Xây dựng quy trình đánh giá tự động cho trợ lý AI trên 20 câu hỏi.
+2. Tính năm chỉ số theo ý tưởng của RAGAS: ba chỉ số câu trả lời và hai chỉ số tìm tài liệu.
+3. Thiết kế tiêu chí cho model chấm theo thang 1–5 và kiểm soát thiên lệch.
+4. Xây dựng bộ câu hỏi chuẩn theo các mức độ khó.
+5. Gom nhóm lỗi và phân tích nguyên nhân bằng 5 lần hỏi “Tại sao?”.
+6. Dùng kết quả đánh giá làm điều kiện kiểm tra trước khi phát hành.
 
 ---
 
-## Luồng end-to-end của bài lab
+## Luồng từ câu hỏi đến báo cáo
 
 ```text
 data/technology_store/*.md
              │
-             ├── học viên đọc và viết ──> golden_dataset.json
+             ├── viết 20 câu chuẩn ──> golden_dataset.json
              │                               │
-             └── DomainAssistant <── question
+             └── Trợ lý RAG <── câu hỏi
                        │
-                       ├── retrieve chunks
-                       └── generate actual answer
+                       ├── tìm đoạn tài liệu
+                       └── tạo câu trả lời
                                   │
                                   v
                      artifacts/actual_answers.json
                                   │
                     evaluate_answers.py
                                   │
-                 template.py (evaluation core)
+                 template.py (bộ chấm điểm)
                                   │
                                   v
                   artifacts/benchmark_results.json
@@ -88,7 +119,8 @@ data/technology_store/*.md
                      exercises.md + reflection.md
 ```
 
-`domain_assistant.py` chỉ đọc `id` và `question` khi sinh answer. Nó **không đọc `expected_answer` hoặc gold contexts**, nhằm tránh data leakage.
+Khi sinh câu trả lời, `domain_assistant.py` chỉ đọc mã và câu hỏi; nó **không
+đọc đáp án chuẩn hoặc bằng chứng chuẩn**. Nhờ đó kết quả không bị lộ đáp án.
 
 ---
 
@@ -100,17 +132,19 @@ data/technology_store/*.md
 ├── RUBRIC.md                    # bảng điểm 100, bằng chứng, deductions, bonus
 ├── CHECKPOINTS.md               # lộ trình CP0–CP5, sản phẩm, cách tự kiểm tra
 ├── RULES.md                     # quy định cá nhân, AI, hợp tác, bảo mật, deadline
-├── README.md                    # tổng quan bài lab và quick start
-├── guide_lab.md                 # hướng dẫn chi tiết từng bước end-to-end
-├── exercises.md                 # worksheet bài tập Part 1–3
-├── reflection.md                # báo cáo failure analysis, 5 Whys và regression
-├── template.py                  # starter evaluation core chứa các TODO
+├── README.md                    # tổng quan bài và cách chạy nhanh
+├── guide_lab.md                 # hướng dẫn chi tiết từ đầu đến cuối của đề
+├── exercises.md                 # bài tập và bảng kết quả
+├── reflection.md                # phân tích lỗi, 5 lần hỏi Tại sao và kiểm tra sau sửa
+├── template.py                  # bộ chấm điểm đã hoàn thiện
 ├── solution/
-│   └── solution.py              # bản sao hoàn thiện của template.py khi nộp bài
-├── domain_assistant.py          # RAG system under evaluation (OrbitTech Support)
-├── evaluate_answers.py          # adapter artifact → evaluation core
-├── validate_golden_dataset.py   # script kiểm tra schema và provenance dataset
-├── golden_dataset.json          # form 20 QA để học viên điền
+│   └── solution.py              # bản đồng bộ logic chấm điểm để nộp bài
+├── domain_assistant.py          # trợ lý RAG OrbitTech được đánh giá
+├── evaluate_answers.py          # đọc câu trả lời đã lưu và gọi bộ chấm điểm
+├── validate_golden_dataset.py   # kiểm tra cấu trúc và trích dẫn bộ câu hỏi
+├── golden_dataset.json          # 20 câu hỏi và đáp án chuẩn gốc
+├── demo_vi.py                   # nhãn và diễn giải tiếng Việt cho giao diện
+├── HUONG_DAN_DEMO_VI.md         # lệnh chạy và lời thoại thuyết trình
 ├── data/technology_store/       # corpus tài liệu nguồn của OrbitTech Store
 ├── tests/                       # bộ unit tests kiểm tra evaluation core
 ├── requirements.txt
@@ -123,12 +157,25 @@ Khi chạy benchmark, các script sẽ tạo thư mục `artifacts/` chứa `act
 
 ## Tổng quan Tasks
 
-- **Task 1 — Data Models:** Hoàn thiện `QAPair`, `EvalResult` và phương thức `overall_score()`.
-- **Task 2 — RAGASEvaluator:** Triển khai 3 answer metrics (`faithfulness`, `relevance`, `completeness`) và 2 retrieval metrics (`context_recall`, `context_precision`).
-- **Task 3 — LLMJudge:** Xây dựng `score_response()` chấm điểm theo rubric và `detect_bias()` phát hiện bias.
-- **Task 4 — BenchmarkRunner:** Chạy pipeline benchmark, tổng hợp báo cáo và phát hiện regression (> 0.05).
-- **Task 5 — FailureAnalyzer:** Phân loại lỗi (`categorize_failures`), chẩn đoán nguyên nhân gốc (`find_root_cause`) và tạo bảng `improvement_log`.
-- **Task 6 — Golden Dataset & Real Benchmark:** Xây dựng 20 QA dataset, chạy RAG tạo actual answers, chạy benchmark và hoàn thiện `reflection.md`.
+### Giao diện demo Streamlit
+
+Sau khi cài dependencies và cấu hình `.env`, chạy trong PowerShell:
+
+```powershell
+.venv\Scripts\python.exe -m streamlit run app.py
+```
+
+Chọn một mã câu chuẩn để xem kết quả đã lưu và năm chỉ số bằng tiếng Việt mà
+không gọi API. Nút **Hỏi trợ lý trực tiếp** sẽ gọi API trong `.env`; câu trả
+lời mới có thể khác lần benchmark đã lưu. Với câu hỏi tự nhập, ba chỉ số cần
+đáp án chuẩn sẽ để trống, tránh hiển thị điểm giả.
+
+- **Việc 1 — Cấu trúc dữ liệu:** Hoàn thiện `QAPair`, `EvalResult` và phương thức `overall_score()`.
+- **Việc 2 — Năm chỉ số:** Tính ba chỉ số câu trả lời (`faithfulness`, `relevance`, `completeness`) và hai chỉ số tìm tài liệu (`context_recall`, `context_precision`).
+- **Việc 3 — Model chấm điểm:** Dùng `score_response()` chấm theo tiêu chí và `detect_bias()` tìm thiên lệch.
+- **Việc 4 — Chạy 20 câu:** Dùng `BenchmarkRunner` tổng hợp báo cáo và phát hiện điểm giảm hơn 0.05.
+- **Việc 5 — Phân tích lỗi:** Dùng `FailureAnalyzer` phân loại, tìm nguyên nhân và lập bảng hành động cải tiến.
+- **Việc 6 — Bộ câu hỏi và lần chạy thật:** Viết 20 câu chuẩn, chạy RAG, chấm kết quả và hoàn thiện `reflection.md`.
 
 Chi tiết từng task và checkpoints xem tại [`CHECKPOINTS.md`](CHECKPOINTS.md) và [`guide_lab.md`](guide_lab.md).
 
