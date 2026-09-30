@@ -33,6 +33,7 @@ tiếp** mới gọi endpoint trong `.env` và có thể phát sinh chi phí. N�
 lại kết quả thật, chạy hai lệnh sau theo thứ tự; lần gọi mới có thể cho câu
 trả lời và điểm khác lần đã lưu:
 
+
 ```powershell
 .venv\Scripts\python.exe domain_assistant.py
 .venv\Scripts\python.exe evaluate_answers.py
